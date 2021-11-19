@@ -1,0 +1,236 @@
+version: "3.9"
+services:
+  namenode:
+    hostname: namenode
+    image: sebssekk/hadoop
+    command: bash /start.sh
+    ports:
+      - "2222:22" #ssh
+      - "9870:9870" # namenode 
+      - "8088:8088" # yarn 
+      - "8080:8080" # spark
+      - "8888:8888" # jupyter
+      - "18080:18080" # spark hystory server
+      - "16010:16010" # hbase master UI
+    configs:
+      - source: hadoop-workers
+        target: /opt/hadoop/etc/hadoop/workers
+      - source: hadoop-masters
+        target: /opt/hadoop/etc/hadoop/masters
+      - source: hadoop-core-site
+        target: /opt/hadoop/etc/hadoop/core-site.xml
+      - source: hadoop-hdfs-site
+        target: /opt/hadoop/etc/hadoop/hdfs-site.xml
+      - source: hadoop-yarn-site
+        target: /opt/hadoop/etc/hadoop/yarn-site.xml
+      - source: hadoop-mapred-site
+        target: /opt/hadoop/etc/hadoop/mapred-site.xml
+      - source: spark-conf
+        target: /opt/spark/conf/spark-defaults.conf
+      - source: spark-env
+        target: /opt/spark/conf/spark-env.sh
+      - source: spark-workers
+        target: /opt/spark/conf/workers
+      - source: hbase-regionservers
+        target: /opt/hbase/conf/regionservers
+      - source: hbase-site
+        target: /opt/hbase/conf/hbase-site.xml
+      - source: hbase-env
+        target: /opt/hbase/conf/hbase-env.sh
+    volumes:
+      - ~/CLUSTER1/hdfs-storage-space/namenode:/usr/local/hadoop/hdfs/data
+      - ~/CLUSTER1/hadoop/namenode-start.sh:/start.sh
+    depends_on:
+      - "datanode1"
+      - "datanode2"
+      - "datanode3"
+    deploy:
+      placement:
+        constraints: 
+          - node.role==manager
+  datanode1:
+    hostname: datanode1
+    image: sebssekk/hadoop
+    command: tail -f /dev/null
+    configs:
+      - source: hadoop-workers
+        target: /opt/hadoop/etc/hadoop/workers
+      - source: hadoop-masters
+        target: /opt/hadoop/etc/hadoop/masters
+      - source: hadoop-core-site
+        target: /opt/hadoop/etc/hadoop/core-site.xml
+      - source: hadoop-hdfs-site
+        target: /opt/hadoop/etc/hadoop/hdfs-site.xml
+      - source: hadoop-yarn-site
+        target: /opt/hadoop/etc/hadoop/yarn-site.xml
+      - source: hadoop-mapred-site
+        target: /opt/hadoop/etc/hadoop/mapred-site.xml
+      - source: spark-conf
+        target: /opt/spark/conf/spark-defaults.conf
+      - source: spark-env
+        target: /opt/spark/conf/spark-env.sh
+      - source: spark-workers
+        target: /opt/spark/conf/workers
+      - source: hbase-regionservers
+        target: /opt/hbase/conf/regionservers
+      - source: hbase-site
+        target: /opt/hbase/conf/hbase-site.xml
+      - source: hbase-env
+        target: /opt/hbase/conf/hbase-env.sh
+    volumes:
+      - ~/CLUSTER1/hdfs-storage-space/datanode1:/usr/local/hadoop/hdfs/data
+  datanode2:
+    hostname: datanode2
+    image: sebssekk/hadoop
+    command: tail -f /dev/null
+    configs:
+      - source: hadoop-workers
+        target: /opt/hadoop/etc/hadoop/workers
+      - source: hadoop-masters
+        target: /opt/hadoop/etc/hadoop/masters
+      - source: hadoop-core-site
+        target: /opt/hadoop/etc/hadoop/core-site.xml
+      - source: hadoop-hdfs-site
+        target: /opt/hadoop/etc/hadoop/hdfs-site.xml
+      - source: hadoop-yarn-site
+        target: /opt/hadoop/etc/hadoop/yarn-site.xml
+      - source: hadoop-mapred-site
+        target: /opt/hadoop/etc/hadoop/mapred-site.xml
+      - source: spark-conf
+        target: /opt/spark/conf/spark-defaults.conf
+      - source: spark-env
+        target: /opt/spark/conf/spark-env.sh
+      - source: spark-workers
+        target: /opt/spark/conf/workers
+      - source: hbase-regionservers
+        target: /opt/hbase/conf/regionservers
+      - source: hbase-site
+        target: /opt/hbase/conf/hbase-site.xml
+      - source: hbase-env
+        target: /opt/hbase/conf/hbase-env.sh
+    volumes:
+      - ~/CLUSTER1/hdfs-storage-space/datanode2:/usr/local/hadoop/hdfs/data
+      
+  datanode3:
+    hostname: datanode3
+    image: sebssekk/hadoop
+    command: tail -f /dev/null
+    configs:
+      - source: hadoop-workers
+        target: /opt/hadoop/etc/hadoop/workers
+      - source: hadoop-masters
+        target: /opt/hadoop/etc/hadoop/masters
+      - source: hadoop-core-site
+        target: /opt/hadoop/etc/hadoop/core-site.xml
+      - source: hadoop-hdfs-site
+        target: /opt/hadoop/etc/hadoop/hdfs-site.xml
+      - source: hadoop-yarn-site
+        target: /opt/hadoop/etc/hadoop/yarn-site.xml
+      - source: hadoop-mapred-site
+        target: /opt/hadoop/etc/hadoop/mapred-site.xml
+      - source: spark-conf
+        target: /opt/spark/conf/spark-defaults.conf
+      - source: spark-env
+        target: /opt/spark/conf/spark-env.sh
+      - source: spark-workers
+        target: /opt/spark/conf/workers
+      - source: hbase-regionservers
+        target: /opt/hbase/conf/regionservers
+      - source: hbase-site
+        target: /opt/hbase/conf/hbase-site.xml
+      - source: hbase-env
+        target: /opt/hbase/conf/hbase-env.sh
+    volumes:
+      - ~/CLUSTER1/hdfs-storage-space/datanode3:/usr/local/hadoop/hdfs/data
+      
+
+  zookeeper1:  
+    hostname: zookeeper1
+    environment:
+      - ZOO_MY_ID=1 # < Written to /data/myid
+    image: zookeeper
+    ports:
+      - "8080"
+    configs:
+      - source: zoo-conf
+        target: /conf/zoo.cfg
+
+  zookeeper2:
+    hostname: zookeeper2
+    environment:
+      - ZOO_MY_ID=2
+    image: zookeeper
+    ports:
+      - "8080"
+    configs:
+      - source: zoo-conf
+        target: /conf/zoo.cfg
+
+  zookeeper3:
+    hostname: zookeeper3
+    environment:
+      - ZOO_MY_ID=3
+    image: zookeeper
+    ports:
+      - "8080"
+    configs:
+      - source: zoo-conf
+        target: /conf/zoo.cfg
+
+  kafka:
+    hostname: kafka
+    image: sebssekk/kafka
+    ports:
+      - "9092:9092"
+    configs:
+      - source: kafka-conf
+        target: /opt/kafka/config/server.properties
+    depends_on:
+      - "zookeeper1"
+      - "zookeeper2"
+      - "zookeeper3"
+  kafkaui:
+    hostname: kafkaui
+    image: provectuslabs/kafka-ui:master
+    ports:
+      - "9000:9000"
+    environment:
+      - KAFKA_CLUSTER_0_NAME=local
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
+      - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper1:2181,zookeeper2:2181,zookeeper3:2181
+      - SERVER_PORT=9000
+    depends_on:
+      - "kafka"
+
+
+configs:
+  namenode-start:
+    file: namenode-start.sh
+  hadoop-workers:  
+    file: hadoop/etc/workers
+  hadoop-masters:  
+    file: hadoop/etc/masters
+  hadoop-core-site:  
+    file: hadoop/etc/core-site.xml
+  hadoop-hdfs-site:
+    file: hadoop/etc/hdfs-site.xml
+  hadoop-yarn-site:
+    file: hadoop/etc/yarn-site.xml
+  hadoop-mapred-site:
+    file: hadoop/etc/mapred-site.xml
+  spark-conf:
+    file: spark/conf/spark-defaults.conf
+  spark-env:
+    file: spark/conf/spark-env.sh
+  spark-workers:
+    file: spark/conf/workers
+  hbase-regionservers:
+    file: hbase/conf/regionservers
+  hbase-site:
+    file: hbase/conf/hbase-site.xml
+  hbase-env:
+    file: hbase/conf/hbase-env.sh
+  zoo-conf:
+    file: zookeeper/conf/zoo.cfg
+  kafka-conf:
+    file: kafka/config/server.properties

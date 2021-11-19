@@ -1,0 +1,7 @@
+service ssh restart \
+&& runuser -l hadoop -c '/opt/hadoop/bin/hdfs namenode -format && /opt/hadoop/sbin/start-dfs.sh' \
+&& runuser -l hadoop -c '/opt/hadoop/sbin/start-yarn.sh' \
+&& runuser -l hadoop -c '/opt/hadoop/bin/hdfs dfs -mkdir /tmp' \
+&& runuser -l hadoop -c '/opt/hadoop/bin/hdfs dfs -mkdir -p /user/hive/warehouse' \
+&& runuser -l hadoop -c '/opt/hive/bin/schematool -dbType derby -initSchema' \
+&& tail -f 
