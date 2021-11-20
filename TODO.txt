@@ -1,5 +1,5 @@
+> Customize kudu and Impala Docker image
 > move from docker-compose to kubernetes
-> merge the 2 cluster 
 > finish the HUE configuration
 > adding other services like oozie
 > write a good readme
