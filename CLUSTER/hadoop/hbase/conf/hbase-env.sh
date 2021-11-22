@@ -119,7 +119,7 @@ export HBASE_REGIONSERVERS=${HBASE_HOME}/conf/regionservers
 # export HBASE_PID_DIR=/var/hadoop/pids
 
 # Seconds to sleep between slave commands.  Unset by default.  This
-# can be useful in large clusters, where, e.g., slave rsyncs can
+# can be useful in large ./s, where, e.g., slave rsyncs can
 # otherwise arrive faster than the master can service them.
 # export HBASE_SLAVE_SLEEP=0.1
 

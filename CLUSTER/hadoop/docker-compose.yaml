@@ -1,0 +1,201 @@
+version: "3.9"
+services:
+  hue:
+    image: gethue/hue:latest
+    hostname: hue
+    deploy:
+      restart_policy:
+        condition: always
+    ports:
+      - "18888:18888"
+    volumes:
+      - ./hue/conf/hue.ini:/usr/share/hue/desktop/conf/z-hue.ini
+    depends_on:
+      - "mysql"
+
+  namenode:
+    hostname: namenode
+    image: sebssekk/hadoop
+    command: bash /start.sh
+    ports:
+      - "2222:22" #ssh
+      - "9870:9870" # namenode
+      - "8088:8088" # yarn
+      - "9999:9999" # hive
+      - "8080:8080" # spark
+      - "8888:8888" # jupyter
+      - "18080:18080" # spark hystory server
+      - "16010:16010" # hbase master UI
+      - "12000:12000" # sqoop UI
+      - "9095:9095" # hbase thrift server info
+      - "8095:8095" # base rest server info
+    volumes:
+      - ./namenode-start.sh:/start.sh
+      - ../../example-files:/home/hadoop/example-files
+      - ./flume/flume-test-conf.conf:/home/hadoop/flume-test-conf.conf
+      - ../hdfs-storage-space/namenode:/usr/local/hadoop/hdfs/data
+      - ./hadoop/etc/workers:/opt/hadoop/etc/hadoop/workers
+      - ./hadoop/etc/masters:/opt/hadoop/etc/hadoop/masters
+      - ./hadoop/etc/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml
+      - ./hadoop/etc/hdfs-site.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml
+      - ./hadoop/etc/yarn-site.xml:/opt/hadoop/etc/hadoop/yarn-site.xml
+      - ./hadoop/etc/mapred-site.xml:/opt/hadoop/etc/hadoop/mapred-site.xml
+      - ./hadoop/etc/httpfs-site.xml:/opt/hadoop/etc/hadoop/httpfs-site.xml
+      - ./spark/conf/spark-defaults.conf:/opt/spark/conf/spark-defaults.conf
+      - ./spark/conf/spark-env.sh:/opt/spark/conf/spark-env.sh
+      - ./spark/conf/workers:/opt/spark/conf/workers
+      - ./hbase/conf/regionservers:/opt/hbase/conf/regionservers
+      - ./hbase/conf/hbase-site.xml:/opt/hbase/conf/hbase-site.xml
+      - ./hbase/conf/hbase-env.sh:/opt/hbase/conf/hbase-env.sh
+      - ./sqoop/lib/mysql-connector-java-8.0.27.jar:/opt/sqoop/server/lib/mysql-connector-java-8.0.27.jar
+      - ./sqoop/conf/sqoop.properties:/opt/sqoop/conf/sqoop.properties
+    depends_on:
+      - "zookeeper1"
+      - "zookeeper2"
+      - "zookeeper3"
+
+  datanode1:
+    hostname: datanode1
+    image: sebssekk/hadoop
+    command: tail -f /dev/null
+    volumes:
+      - ../hdfs-storage-space/datanode1:/usr/local/hadoop/hdfs/data
+      - ./hadoop/etc/workers:/opt/hadoop/etc/hadoop/workers
+      - ./hadoop/etc/masters:/opt/hadoop/etc/hadoop/masters
+      - ./hadoop/etc/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml
+      - ./hadoop/etc/hdfs-site.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml
+      - ./hadoop/etc/yarn-site.xml:/opt/hadoop/etc/hadoop/yarn-site.xml
+      - ./hadoop/etc/mapred-site.xml:/opt/hadoop/etc/hadoop/mapred-site.xml
+      - ./hadoop/etc/httpfs-site.xml:/opt/hadoop/etc/hadoop/httpfs-site.xml
+      - ./hbase/conf/regionservers:/opt/hbase/conf/regionservers
+      - ./hbase/conf/hbase-site.xml:/opt/hbase/conf/hbase-site.xml
+      - ./hbase/conf/hbase-env.sh:/opt/hbase/conf/hbase-env.sh
+
+  datanode2:
+    hostname: datanode2
+    image: sebssekk/hadoop
+    command: tail -f /dev/null
+    volumes:
+      - ../hdfs-storage-space/datanode2:/usr/local/hadoop/hdfs/data
+      - ./hadoop/etc/workers:/opt/hadoop/etc/hadoop/workers
+      - ./hadoop/etc/masters:/opt/hadoop/etc/hadoop/masters
+      - ./hadoop/etc/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml
+      - ./hadoop/etc/hdfs-site.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml
+      - ./hadoop/etc/yarn-site.xml:/opt/hadoop/etc/hadoop/yarn-site.xml
+      - ./hadoop/etc/mapred-site.xml:/opt/hadoop/etc/hadoop/mapred-site.xml
+      - ./hadoop/etc/httpfs-site.xml:/opt/hadoop/etc/hadoop/httpfs-site.xml
+      - ./hbase/conf/regionservers:/opt/hbase/conf/regionservers
+      - ./hbase/conf/hbase-site.xml:/opt/hbase/conf/hbase-site.xml
+      - ./hbase/conf/hbase-env.sh:/opt/hbase/conf/hbase-env.sh
+  datanode3:
+    hostname: datanode3
+    image: sebssekk/hadoop
+    command: tail -f /dev/null
+    volumes:
+      - ../hdfs-storage-space/datanode3:/usr/local/hadoop/hdfs/data
+      - ./hadoop/etc/workers:/opt/hadoop/etc/hadoop/workers
+      - ./hadoop/etc/masters:/opt/hadoop/etc/hadoop/masters
+      - ./hadoop/etc/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml
+      - ./hadoop/etc/hdfs-site.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml
+      - ./hadoop/etc/yarn-site.xml:/opt/hadoop/etc/hadoop/yarn-site.xml
+      - ./hadoop/etc/mapred-site.xml:/opt/hadoop/etc/hadoop/mapred-site.xml
+      - ./hadoop/etc/httpfs-site.xml:/opt/hadoop/etc/hadoop/httpfs-site.xml
+      - ./hbase/conf/regionservers:/opt/hbase/conf/regionservers
+      - ./hbase/conf/hbase-site.xml:/opt/hbase/conf/hbase-site.xml
+      - ./hbase/conf/hbase-env.sh:/opt/hbase/conf/hbase-env.sh
+
+  zookeeper1:
+    hostname: zookeeper1
+    environment:
+      - ZOO_MY_ID=1 # < Written to /data/myid
+#      - ZOO_SERVERS=server.1=0.0.0.0:2888:3888;2181 server.2=zookeeper2:2888:3888;2181 server.3=zookeeper3:2888:3888;2181
+    image: zookeeper
+    ports:
+      - "8080"
+    volumes:
+      - ./zookeeper/conf/zoo.cfg:/conf/zoo.cfg
+  zookeeper2:
+    hostname: zookeeper2
+    environment:
+      - ZOO_MY_ID=2
+#      - ZOO_SERVERS=server.1=zookeeper1:2888:3888;2181 server.2=0.0.0.0:2888:3888;2181 server.3=zookeeper3:2888:3888;2181
+    image: zookeeper
+    ports:
+      - "8080"
+    volumes:
+      - ./zookeeper/conf/zoo.cfg:/conf/zoo.cfg
+  zookeeper3:
+    hostname: zookeeper3
+    environment:
+      - ZOO_MY_ID=3
+#      - ZOO_SERVERS=server.1=zookeeper1:2888:3888;2181 server.2=zookeeper2:2888:3888;2181 server.3=0.0.0.0:2888:3888;2181
+    image: zookeeper
+    ports:
+      - "8080"
+    volumes:
+      - ./zookeeper/conf/zoo.cfg:/conf/zoo.cfg
+
+  kafka:
+    hostname: kafka
+    image: sebssekk/kafka
+    ports:
+      - "9092:9092"
+    volumes:
+      - ./kafka/config/server.properties:/opt/kafka/config/server.properties
+    depends_on:
+      - "zookeeper1"
+      - "zookeeper2"
+      - "zookeeper3"
+  kafkaui:
+    hostname: kafkaui
+    image: provectuslabs/kafka-ui:master
+    ports:
+      - "9000:9000"
+    environment:
+      - KAFKA_./CLUSTER_0_NAME=local
+      - KAFKA_./CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
+      - KAFKA_./CLUSTERS_0_ZOOKEEPER=zookeeper1:2181,zookeeper2:2181,zookeeper3:2181
+      - SERVER_PORT=9000
+    depends_on:
+      - "kafka"
+
+  mysql:
+    hostname: mysql
+    image: mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=toor
+      - MYSQL_DATABASE=hue
+
+  kudu-master:
+    image: apache/kudu
+    ports:
+      - "8051:8051"
+    command: ["master"]
+    environment:
+      - KUDU_MASTERS=kudu-master
+
+  kudu-tserver:
+    image: apache/kudu
+    depends_on:
+      - kudu-master
+    ports:
+      - "8050"
+    command: ["tserver"]
+    environment:
+      - KUDU_MASTERS=kudu-master#    
+    deploy:
+      replicas: 3
+
+
+
+  impala:
+    image: apache/kudu:impala-latest
+    depends_on:
+      - kudu-master
+    ports:
+      - "25000:25000"
+      - "25010:25010"
+      - "25020:25020"
+    command: ["impala"]
+    environment:
+      - KUDU_MASTERS=kudu-master

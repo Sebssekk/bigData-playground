@@ -12,4 +12,4 @@ RUN mkdir -p ${SQOOP_INSTALL_DIR} && chown -R hadoop:hadoop ${SQOOP_INSTALL_DIR}
 
 WORKDIR $SQOOP_INSTALL_DIR
 
-COPY --chown=hadoop:hadoop --from=sqoop-dev /sqoop-1.99.7-bin-hadoop200 ./
+COPY --chown=hadoop:hadoop --from=sqoop-dev /sqoop-1.99.7-bin-hadoop200 .//hadoop/
