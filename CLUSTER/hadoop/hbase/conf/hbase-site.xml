@@ -95,7 +95,7 @@
   </property>
 
   <property>
-    <name>hbase../.distributed</name>
+    <name>hbase.cluster.distributed</name>
     <value>true</value>
   </property>
   <property>
