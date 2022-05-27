@@ -14,11 +14,12 @@ login     Exec bash commands on the specified service
 
 if [ $# -gt 0 -a ! -z "$1"  ]; then
   if [ "$1" == "start" ]; then
+    mkdir -p ./CLUSTER/hdfs-storage-space/namenode
+    mkdir -p ./CLUSTER/hdfs-storage-space/datanode{1,2,3}
     docker compose -f ./CLUSTER/hadoop/docker-compose.yaml up -d
   elif [ "$1" == "stop" ]; then
     docker compose -f ./CLUSTER/hadoop/docker-compose.yaml down 
-    echo "Cleaning data ... "
-    sudo rm -r ./CLUSTER/hdfs-storage-space/*/*
+    rm -r ./CLUSTER/hdfs-storage-space/*/*
   elif [ "$1" == "login" ]; then
     if [ $# -gt 1 ]; then
       docker compose -f ./CLUSTER/hadoop/docker-compose.yaml exec "$2" bash
