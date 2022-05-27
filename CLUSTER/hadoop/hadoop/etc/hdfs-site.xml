@@ -23,11 +23,11 @@
   </property>
   <property>
     <name>dfs.namenode.name.dir</name>
-    <value>file:///usr/local/hadoop/hdfs/data</value>
+    <value>file:///home/hadoop/hdfs/data</value>
   </property>
   <property>
     <name>dfs.datanode.data.dir</name>
-    <value>file:///usr/local/hadoop/hdfs/data</value>
+    <value>file:///home/hadoop/hdfs/data</value>
   </property>
   <property>
     <name>dfs.webhdfs.enabled</name>

@@ -11,12 +11,12 @@ RUN apt update -y \
 
 FROM base AS hadoop-dev
 
-RUN wget https://dlcdn.apache.org/hadoop/common/hadoop-3.3.0/hadoop-3.3.0.tar.gz \
-    && tar -xzf hadoop-3.3.0.tar.gz \
-    && rm hadoop-3.3.0.tar.gz
+RUN wget https://dlcdn.apache.org/hadoop/common/hadoop-3.3.3/hadoop-3.3.3.tar.gz \
+    && tar -xzf hadoop-3.3.3.tar.gz \
+    && rm hadoop-3.3.3.tar.gz
 
 RUN echo "export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/" >>\
-    hadoop-3.3.0/etc/hadoop/hadoop-env.sh
+    hadoop-3.3.3/etc/hadoop/hadoop-env.sh
 
 FROM base as hadoop
 
@@ -31,7 +31,7 @@ RUN groupadd -g ${GID} hadoop || groupmod -n hadoop $(getent group ${GID} | cut 
     && mkdir -p ${HADOOP_INSTALL_DIR} && chown -R hadoop:hadoop ${HADOOP_INSTALL_DIR}
 
 WORKDIR $HADOOP_INSTALL_DIR
-COPY --chown=hadoop:hadoop --from=hadoop-dev /hadoop-3.3.0 .//hadoop/
+COPY --chown=hadoop:hadoop --from=hadoop-dev /hadoop-3.3.3 .
 
 RUN runuser -l hadoop -c "ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa \
     && cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys"
@@ -50,7 +50,7 @@ RUN mkdir -p ${HIVE_INSTALL_DIR} && chown -R hadoop:hadoop ${HIVE_INSTALL_DIR}
 
 WORKDIR $HIVE_INSTALL_DIR
 
-COPY --chown=hadoop:hadoop --from=hive-dev /apache-hive-3.1.2-bin .//hadoop/
+COPY --chown=hadoop:hadoop --from=hive-dev /apache-hive-3.1.2-bin .
 
 RUN echo "export HADOOP_HOME=/opt/hadoop" >> $HIVE_INSTALL_DIR/bin/hive-config.sh 
 
@@ -58,9 +58,9 @@ RUN rm lib/guava-* && cp /opt/hadoop/share/hadoop/hdfs/lib/guava* lib/
 
 FROM base as spark-dev
 
-RUN wget https://dlcdn.apache.org/spark/spark-3.2.0/spark-3.2.0-bin-hadoop3.2.tgz \
-    && tar -xf spark-3.2.0-bin-hadoop3.2.tgz \
-    && rm spark-3.2.0-bin-hadoop3.2.tgz
+RUN wget https://dlcdn.apache.org/spark/spark-3.2.1/spark-3.2.1-bin-hadoop3.2.tgz \
+    && tar -xf spark-3.2.1-bin-hadoop3.2.tgz \
+    && rm spark-3.2.1-bin-hadoop3.2.tgz
 
 
 FROM hive as hive-spark 
@@ -82,13 +82,13 @@ RUN mkdir -p ${SPARK_INSTALL_DIR} && chown -R hadoop:hadoop ${SPARK_INSTALL_DIR}
 
 WORKDIR $SPARK_INSTALL_DIR
 
-COPY --chown=hadoop:hadoop --from=spark-dev /spark-3.2.0-bin-hadoop3.2 .//hadoop/
+COPY --chown=hadoop:hadoop --from=spark-dev /spark-3.2.1-bin-hadoop3.2 .
 
 FROM base as hbase-dev
 
-RUN wget https://dlcdn.apache.org/hbase/2.4.8/hbase-2.4.8-bin.tar.gz \
-    && tar -xzf hbase-2.4.8-bin.tar.gz \
-    && rm hbase-2.4.8-bin.tar.gz
+RUN wget https://dlcdn.apache.org/hbase/2.4.12/hbase-2.4.12-bin.tar.gz \
+    && tar -xzf hbase-2.4.12-bin.tar.gz \
+    && rm hbase-2.4.12-bin.tar.gz
 
 FROM hive-spark AS hive-spark-hbase
 
@@ -98,7 +98,7 @@ RUN mkdir -p ${HBASE_INSTALL_DIR} && chown -R hadoop:hadoop ${HBASE_INSTALL_DIR}
 
 WORKDIR $HBASE_INSTALL_DIR
 
-COPY --chown=hadoop:hadoop --from=hbase-dev /hbase-2.4.8 .//hadoop/
+COPY --chown=hadoop:hadoop --from=hbase-dev /hbase-2.4.12 .
 
 FROM base AS sqoop-dev
 
@@ -114,7 +114,7 @@ RUN mkdir -p ${SQOOP_INSTALL_DIR} && chown -R hadoop:hadoop ${SQOOP_INSTALL_DIR}
 
 WORKDIR $SQOOP_INSTALL_DIR
 
-COPY --chown=hadoop:hadoop --from=sqoop-dev /sqoop-1.99.7-bin-hadoop200 .//hadoop/
+COPY --chown=hadoop:hadoop --from=sqoop-dev /sqoop-1.99.7-bin-hadoop200 .
 
 RUN rm server/lib/guava-* && cp /opt/hadoop/share/hadoop/hdfs/lib/guava* server/lib/
 RUN rm server/lib/derby*
@@ -133,7 +133,7 @@ RUN mkdir -p ${FLUME_INSTALL_DIR} && chown -R hadoop:hadoop ${FLUME_INSTALL_DIR}
 
 WORKDIR $FLUME_INSTALL_DIR
 
-COPY --chown=hadoop:hadoop --from=flume-dev /apache-flume-1.9.0-bin .//hadoop/
+COPY --chown=hadoop:hadoop --from=flume-dev /apache-flume-1.9.0-bin .
 
 RUN rm lib/guava-* && cp /opt/hadoop/share/hadoop/hdfs/lib/guava* lib/
 
@@ -166,5 +166,5 @@ ENV PATH=$PATH:$SQOOP_HOME/bin
 ENV FLUME_HOME=/opt/flume
 ENV PATH=$PATH:$FLUME_HOME/bin
 
-COPY .//hadoop/hadoop-entrypoint.sh .
-ENTRYPOINT ["/bin/bash",".//hadoop/hadoop-entrypoint.sh"]  
+COPY ./hadoop-entrypoint.sh .
+ENTRYPOINT ["/bin/bash","./hadoop-entrypoint.sh"]  

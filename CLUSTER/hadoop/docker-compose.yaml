@@ -33,7 +33,7 @@ services:
       - ./namenode-start.sh:/start.sh
       - ../../example-files:/home/hadoop/example-files
       - ./flume/flume-test-conf.conf:/home/hadoop/flume-test-conf.conf
-      - ../hdfs-storage-space/namenode:/usr/local/hadoop/hdfs/data
+      - ../hdfs-storage-space/namenode:/home/hadoop/hdfs/data
       - ./hadoop/etc/workers:/opt/hadoop/etc/hadoop/workers
       - ./hadoop/etc/masters:/opt/hadoop/etc/hadoop/masters
       - ./hadoop/etc/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml
@@ -59,7 +59,7 @@ services:
     image: sebssekk/hadoop
     command: tail -f /dev/null
     volumes:
-      - ../hdfs-storage-space/datanode1:/usr/local/hadoop/hdfs/data
+      - ../hdfs-storage-space/datanode1:/home/hadoop/hdfs/data
       - ./hadoop/etc/workers:/opt/hadoop/etc/hadoop/workers
       - ./hadoop/etc/masters:/opt/hadoop/etc/hadoop/masters
       - ./hadoop/etc/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml
@@ -76,8 +76,8 @@ services:
     image: sebssekk/hadoop
     command: tail -f /dev/null
     volumes:
-      - ../hdfs-storage-space/datanode2:/usr/local/hadoop/hdfs/data
-      - ./hadoop/etc/workers:/opt/hadoop/etc/hadoop/workers
+      - ../hdfs-storage-space/datanode2:/home/hadoop/hdfs/data
+      - ./hadoop/etc/workers:/opt/hadoop/etc/hadoop/workerscd C
       - ./hadoop/etc/masters:/opt/hadoop/etc/hadoop/masters
       - ./hadoop/etc/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml
       - ./hadoop/etc/hdfs-site.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml
@@ -92,7 +92,7 @@ services:
     image: sebssekk/hadoop
     command: tail -f /dev/null
     volumes:
-      - ../hdfs-storage-space/datanode3:/usr/local/hadoop/hdfs/data
+      - ../hdfs-storage-space/datanode3:/home/hadoop/hdfs/data:rw
       - ./hadoop/etc/workers:/opt/hadoop/etc/hadoop/workers
       - ./hadoop/etc/masters:/opt/hadoop/etc/hadoop/masters
       - ./hadoop/etc/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml
